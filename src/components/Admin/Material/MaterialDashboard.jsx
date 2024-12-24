@@ -63,6 +63,8 @@ const MaterialDashboard = () => {
       navigate('/pending-material-requests');
     } else if (title === 'Material Consumption') {
       navigate('/material-consumption');
+    } else if (title === 'Store') {
+      navigate('/store-data');
     }
   };
 

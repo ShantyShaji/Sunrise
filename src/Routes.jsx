@@ -22,6 +22,7 @@ import ViewMaterial from './components/Admin/Material/ViewMaterial';
 import MaterialRequest from './components/Admin/Material/MaterialRequest';
 import PendingMaterialRequest from './components/Admin/Material/PendingMaterialRequest';
 import MaterialConsumption from './components/Admin/Material/MaterialConsumption';
+import StoreData from './components/Admin/Material/StoreData';
 
 const AppRoutes = () => {
   return (
@@ -55,6 +56,7 @@ const AppRoutes = () => {
         element={<PendingMaterialRequest />}
       />
       <Route path="/material-consumption" element={<MaterialConsumption />} />
+      <Route path="/store-data" element={<StoreData />} />
     </Routes>
   );
 };
