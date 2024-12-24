@@ -17,6 +17,11 @@ import ActiveContractTable from './components/ActiveContractTable';
 import ExpiredContractTable from './components/ExpiredContractTable';
 import ExpiredSoonContractTable from './components/ExpiredSoonContractTable';
 import RateCardTable from './components/RateCardTable';
+import MaterialDashboard from './components/Admin/Material/MaterialDashboard';
+import ViewMaterial from './components/Admin/Material/ViewMaterial';
+import MaterialRequest from './components/Admin/Material/MaterialRequest';
+import PendingMaterialRequest from './components/Admin/Material/PendingMaterialRequest';
+import MaterialConsumption from './components/Admin/Material/MaterialConsumption';
 
 const AppRoutes = () => {
   return (
@@ -28,7 +33,6 @@ const AppRoutes = () => {
       <Route path="/staff/:companyId" element={<ViewStaff />} />
       <Route path="/user-rights" element={<UserRights />} />
 
-
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
       <Route path="/client-location" element={<ClientLocation />} />
       <Route path="/clients" element={<ClientTable />} />
@@ -37,10 +41,20 @@ const AppRoutes = () => {
       <Route path="/add-contract" element={<AddContract />} />
       <Route path="/active-contracts" element={<ActiveContractTable />} />
       <Route path="/expired-contracts" element={<ExpiredContractTable />} />
-      <Route path="/expiredsoon-contracts" element={<ExpiredSoonContractTable />} />
+      <Route
+        path="/expiredsoon-contracts"
+        element={<ExpiredSoonContractTable />}
+      />
       <Route path="/ratecardtable" element={<RateCardTable />} />
 
-
+      <Route path="/material-dashboard" element={<MaterialDashboard />} />
+      <Route path="/view-material" element={<ViewMaterial />} />
+      <Route path="/material-requests" element={<MaterialRequest />} />
+      <Route
+        path="/pending-material-requests"
+        element={<PendingMaterialRequest />}
+      />
+      <Route path="/material-consumption" element={<MaterialConsumption />} />
     </Routes>
   );
 };
