@@ -23,6 +23,10 @@ import MaterialRequest from './components/Admin/Material/MaterialRequest';
 import PendingMaterialRequest from './components/Admin/Material/PendingMaterialRequest';
 import MaterialConsumption from './components/Admin/Material/MaterialConsumption';
 import StoreData from './components/Admin/Material/StoreData';
+import UsermanagementDashboard from './components/Admin/UserManagement/UsermanagementDashboard';
+import Staffdetails from './components/Admin/UserManagement/Staffdetails';
+// import AddUser from './components/Admin/UserManagement/AddUser';
+// import ViewUsers from './components/Admin/UserManagement/ViewUsers';
 
 const AppRoutes = () => {
   return (
@@ -57,6 +61,12 @@ const AppRoutes = () => {
       />
       <Route path="/material-consumption" element={<MaterialConsumption />} />
       <Route path="/store-data" element={<StoreData />} />
+
+      <Route
+        path="/user-management-dashboard"
+        element={<UsermanagementDashboard />}
+      />
+      <Route path="/staff-details" element={<Staffdetails />} />
     </Routes>
   );
 };

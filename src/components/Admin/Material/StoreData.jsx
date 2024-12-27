@@ -9,6 +9,13 @@ const StoreData = () => {
   const [description, setDescription] = useState('');
   const [errors, setErrors] = useState({});
   const [expandedDescription, setExpandedDescription] = useState(null);
+  const [selectedStaff, setSelectedStaff] = useState('');
+  const [selectedTools, setSelectedTools] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isStaffDropdownOpen, setIsStaffDropdownOpen] = useState(false);
+  const [staffSearchTerm, setStaffSearchTerm] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState({});
 
   // Dummy data for the table
   const toolsList = [
@@ -36,6 +43,55 @@ const StoreData = () => {
       description:
         'Complete set of combination wrenches in various sizes. Made from chrome vanadium steel with mirror polish finish.',
     },
+  ];
+
+  // Add dummy data for dropdowns
+  const staffList = [
+    { id: 1, name: 'John Smith' },
+    { id: 2, name: 'Sarah Johnson' },
+    { id: 3, name: 'Michael Brown' },
+    { id: 4, name: 'Emily Davis' },
+    { id: 5, name: 'Robert Wilson' },
+  ];
+
+  // Add filter function for tools
+  const filteredTools = toolsList.filter((tool) =>
+    tool.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredStaff = staffList.filter((staff) =>
+    staff.name.toLowerCase().includes(staffSearchTerm.toLowerCase())
+  );
+
+  // Add this new dummy data for assigned tools
+  const assignedToolsList = [
+    {
+      id: 1,
+      staffName: 'John Smith',
+      toolName: 'Hammer',
+    },
+    {
+      id: 2,
+      staffName: 'Sarah Johnson',
+      toolName: 'Power Drill',
+    },
+    {
+      id: 3,
+      staffName: 'Michael Brown',
+      toolName: 'Measuring Tape',
+    },
+    {
+      id: 4,
+      staffName: 'Emily Davis',
+      toolName: 'Wrench Set',
+    },
+  ];
+
+  // Add these status options
+  const statusOptions = [
+    { value: '', label: 'Select' },
+    { value: 'temporary_hold', label: 'Temporary Hold' },
+    { value: 'permanent_return', label: 'Permanent Return' },
   ];
 
   const validateForm = () => {
@@ -79,6 +135,15 @@ const StoreData = () => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
+  const handleStatusChange = (itemId, newStatus) => {
+    setSelectedStatus((prev) => ({
+      ...prev,
+      [itemId]: newStatus,
+    }));
+    // You can add your API call here to update the status
+    console.log(`Status updated for item ${itemId} to ${newStatus}`);
+  };
+
   return (
     <div className="w-full h-screen bg-gray-50 flex">
       <Adminsidebar />
@@ -113,9 +178,7 @@ const StoreData = () => {
             </button>
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                expandedSection === 'addTools'
-                  ? 'max-h-[500px] opacity-100'
-                  : 'max-h-0 opacity-0'
+                expandedSection === 'addTools' ? 'block' : 'hidden'
               }`}
             >
               <div className="p-6 border-t bg-white rounded-b-xl">
@@ -193,9 +256,7 @@ const StoreData = () => {
             </button>
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                expandedSection === 'listTools'
-                  ? 'max-h-[800px] opacity-100'
-                  : 'max-h-0 opacity-0'
+                expandedSection === 'listTools' ? 'block' : 'hidden'
               }`}
             >
               <div className="p-6 border-t">
@@ -347,22 +408,175 @@ const StoreData = () => {
               />
             </button>
             <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                expandedSection === 'assignTools'
-                  ? 'max-h-[500px] opacity-100'
-                  : 'max-h-0 opacity-0'
+              className={`transition-all duration-300 ease-in-out ${
+                expandedSection === 'assignTools' ? 'block' : 'hidden'
               }`}
             >
               <div className="p-6 border-t">
-                {/* Add your assign tools content here */}
+                <form className="space-y-6">
+                  <div className="relative">
+                    <label className="block mb-2 text-gray-600 font-medium">
+                      Staff Name
+                    </label>
+                    <div className="relative">
+                      <div
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer flex justify-between items-center bg-white"
+                        onClick={() => {
+                          setIsStaffDropdownOpen(!isStaffDropdownOpen);
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="text-gray-500">
+                          {selectedStaff
+                            ? staffList.find(
+                                (s) => s.id === parseInt(selectedStaff)
+                              )?.name
+                            : 'Select Staff'}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${
+                            isStaffDropdownOpen ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+
+                      {isStaffDropdownOpen && (
+                        <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-[100]">
+                          <div className="p-2">
+                            <input
+                              type="text"
+                              placeholder="Search staff..."
+                              value={staffSearchTerm}
+                              onChange={(e) =>
+                                setStaffSearchTerm(e.target.value)
+                              }
+                              className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-gray-600"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                          <div className="max-h-48 overflow-y-auto bg-white">
+                            {filteredStaff.map((staff) => (
+                              <div
+                                key={staff.id}
+                                className="px-4 py-2 cursor-pointer hover:bg-gray-50 text-gray-700"
+                                onClick={() => {
+                                  setSelectedStaff(staff.id.toString());
+                                  setIsStaffDropdownOpen(false);
+                                  setStaffSearchTerm('');
+                                }}
+                              >
+                                {staff.name}
+                              </div>
+                            ))}
+                            {filteredStaff.length === 0 && (
+                              <div className="px-4 py-2 text-gray-500">
+                                No staff found
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <label className="block mb-2 text-gray-600 font-medium">
+                      Tools
+                    </label>
+                    <div className="relative">
+                      <div
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer flex justify-between items-center bg-white"
+                        onClick={() => {
+                          setIsDropdownOpen(!isDropdownOpen);
+                          setIsStaffDropdownOpen(false);
+                        }}
+                      >
+                        <span className="text-gray-500">
+                          {selectedTools.length > 0
+                            ? toolsList.find(
+                                (t) => t.id === parseInt(selectedTools)
+                              )?.name
+                            : 'No tools selected'}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${
+                            isDropdownOpen ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+
+                      {isDropdownOpen && (
+                        <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-[100]">
+                          <div className="p-2">
+                            <input
+                              type="text"
+                              placeholder="Search tools..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-gray-600"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                          <div className="max-h-48 overflow-y-auto bg-white">
+                            {filteredTools.map((tool) => (
+                              <div
+                                key={tool.id}
+                                className="px-4 py-2 cursor-pointer hover:bg-gray-50 text-gray-700"
+                                onClick={() => {
+                                  setSelectedTools(tool.id.toString());
+                                  setIsDropdownOpen(false);
+                                  setSearchTerm('');
+                                }}
+                              >
+                                {tool.name}
+                              </div>
+                            ))}
+                            {filteredTools.length === 0 && (
+                              <div className="px-4 py-2 text-gray-500">
+                                No tools found
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transform hover:scale-[1.02] transition-all duration-200 font-medium"
+                  >
+                    Save
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           {/* Assigned Status Section */}
           <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-            <button
-              className={`w-full p-5 text-left font-medium flex justify-between items-center ${
+            <div
+              className={`w-full p-5 text-left font-medium flex justify-between items-center cursor-pointer ${
                 expandedSection === 'assignedStatus'
                   ? 'bg-blue-50 rounded-t-xl'
                   : 'rounded-xl'
@@ -380,16 +594,110 @@ const StoreData = () => {
                     : 'rotate-0'
                 }`}
               />
-            </button>
+            </div>
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                expandedSection === 'assignedStatus'
-                  ? 'max-h-[500px] opacity-100'
-                  : 'max-h-0 opacity-0'
+                expandedSection === 'assignedStatus' ? 'block' : 'hidden'
               }`}
             >
               <div className="p-6 border-t">
-                {/* Add your assigned status content here */}
+                <div className="mb-6">
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex-1">
+                      <label className="block mb-2 text-gray-600 font-medium">
+                        Staff Name
+                      </label>
+                      <div className="relative">
+                        <select className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none">
+                          <option value="">Select Staff</option>
+                          {staffList.map((staff) => (
+                            <option key={staff.id} value={staff.id}>
+                              {staff.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                          <IoIosArrowDown className="text-gray-400 text-xl" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <label className="block mb-2 text-gray-600 font-medium">
+                        Tool Name
+                      </label>
+                      <div className="relative">
+                        <select className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none">
+                          <option value="">Select Tool</option>
+                          {toolsList.map((tool) => (
+                            <option key={tool.id} value={tool.id}>
+                              {tool.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                          <IoIosArrowDown className="text-gray-400 text-xl" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-end">
+                      <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200">
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto rounded-lg shadow">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Sl.No
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Staff Name
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Tool Name
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {assignedToolsList.map((item, index) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {index + 1}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {item.staffName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {item.toolName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <select
+                              className="w-full p-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                              value={selectedStatus[item.id] || item.status}
+                              onChange={(e) =>
+                                handleStatusChange(item.id, e.target.value)
+                              }
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {statusOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
