@@ -1,64 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Adminsidebar from '../../../Sidebar/Adminsidebar';
+import { FiEdit } from 'react-icons/fi';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoArrowBack } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import UpdateRateCardModal from './UpdateRateCardModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
-const Staffdetails = () => {
+const ViewRateCard = () => {
   const navigate = useNavigate();
+  const [rateCards] = useState([
+    { id: 1, name: 'Rate Card 1', type: 'Applicable' },
+    { id: 2, name: 'Rate Card 2', type: 'Not Applicable' },
+  ]);
+  const [selectedRateCard, setSelectedRateCard] = useState(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [rateCardToDelete, setRateCardToDelete] = useState(null);
 
-  const staffData = [
-    {
-      id: 1,
-      name: 'Aaa new staff',
-      role: 'Staff',
-      dateOfRegistration: '05-11-2024',
-    },
-    {
-      id: 2,
-      name: 'AAAA Staff',
-      role: 'Staff',
-      dateOfRegistration: '08-11-2024',
-    },
-    { id: 3, name: 'Aanand', role: 'Staff', dateOfRegistration: '01-11-2024' },
-    {
-      id: 4,
-      name: 'Ambadi',
-      role: 'Sales Person',
-      dateOfRegistration: '25-10-2024',
-    },
-    {
-      id: 5,
-      name: 'Ammu',
-      role: 'Sales Person',
-      dateOfRegistration: '08-11-2024',
-    },
-    { id: 6, name: 'Anna', role: 'Staff', dateOfRegistration: '06-11-2024' },
-    {
-      id: 7,
-      name: 'Annu',
-      role: 'Sales Person',
-      dateOfRegistration: '06-11-2024',
-    },
-    {
-      id: 8,
-      name: 'Anwar',
-      role: 'Sales Person',
-      dateOfRegistration: '28-10-2024',
-    },
-    {
-      id: 9,
-      name: 'Madhav',
-      role: 'Sales Person',
-      dateOfRegistration: '28-10-2024',
-    },
-    {
-      id: 10,
-      name: 'Malavika',
-      role: 'Sales Person',
-      dateOfRegistration: '25-10-2024',
-    },
-  ];
+  const handleEdit = (rateCard) => {
+    setSelectedRateCard(rateCard);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleDelete = (rateCard) => {
+    setRateCardToDelete(rateCard);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    // Add your delete logic here
+    console.log('Deleting rate card:', rateCardToDelete);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -75,7 +49,7 @@ const Staffdetails = () => {
           <div className="flex items-center justify-between mb-12">
             <div className="flex items-center space-x-8">
               <button
-                onClick={() => navigate('/user-management-dashboard')}
+                onClick={() => navigate('/contract-dashboard')}
                 className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
               >
                 <IoArrowBack
@@ -85,7 +59,7 @@ const Staffdetails = () => {
                 <span className="text-sm font-medium">Dashboard</span>
               </button>
               <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-                Staff Details
+                RATE CARD DETAILS
               </h1>
             </div>
           </div>
@@ -96,17 +70,14 @@ const Staffdetails = () => {
               <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
-                    <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600 w-24">
-                      Sl No.
+                    <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600">
+                      Sl.No
                     </th>
                     <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600">
-                      Staff Name
+                      Rate Card Name
                     </th>
                     <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600">
-                      Role
-                    </th>
-                    <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600">
-                      Date Of Registration
+                      Opex Or Capex
                     </th>
                     <th className="px-8 py-5 text-left text-sm font-semibold text-gray-600">
                       Action
@@ -114,57 +85,46 @@ const Staffdetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {staffData.map((staff, index) => (
+                  {rateCards.map((rateCard, index) => (
                     <motion.tr
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      key={staff.id}
+                      key={rateCard.id}
                       className="group hover:bg-blue-50/50 transition-colors duration-300"
                     >
-                      <td className="px-8 py-5 w-24">
+                      <td className="px-8 py-5">
                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
-                          {staff.id}
+                          {index + 1}
                         </span>
                       </td>
                       <td className="px-8 py-5">
-                        <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors duration-300">
-                          {staff.name}
+                        <span className="text-gray-700 font-medium">
+                          {rateCard.name}
                         </span>
                       </td>
                       <td className="px-8 py-5">
-                        <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
-                          {staff.role}
+                        <span className="text-gray-700 font-medium">
+                          {rateCard.type}
                         </span>
                       </td>
                       <td className="px-8 py-5">
-                        <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
-                          {staff.dateOfRegistration}
-                        </span>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="flex space-x-2">
+                        <div className="flex items-center space-x-4">
                           <motion.button
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => navigate('/userrights')}
-                            className="px-4 py-2 text-yellow-500 border border-yellow-500 rounded-lg hover:bg-yellow-50 transition-colors duration-300"
+                            onClick={() => handleEdit(rateCard)}
+                            className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors duration-300"
                           >
-                            User Rights
+                            <FiEdit size={18} />
                           </motion.button>
                           <motion.button
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 text-blue-500 border border-blue-500 rounded-lg hover:bg-blue-50 transition-colors duration-300"
+                            onClick={() => handleDelete(rateCard)}
+                            className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors duration-300"
                           >
-                            Edit
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 text-red-500 border border-red-500 rounded-lg hover:bg-red-50 transition-colors duration-300"
-                          >
-                            Delete
+                            <RiDeleteBin6Line size={18} />
                           </motion.button>
                         </div>
                       </td>
@@ -188,8 +148,28 @@ const Staffdetails = () => {
           </div>
         </motion.div>
       </div>
+
+      <UpdateRateCardModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => {
+          setIsUpdateModalOpen(false);
+          setSelectedRateCard(null);
+        }}
+        rateCard={selectedRateCard}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setRateCardToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Rate Card"
+        message="Are you sure you want to delete this rate card? This action cannot be undone."
+      />
     </div>
   );
 };
 
-export default Staffdetails;
+export default ViewRateCard;
